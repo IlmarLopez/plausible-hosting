@@ -12,7 +12,7 @@ import (
 
 type PlausibleStackProps struct {
 	awscdk.StackProps
-	Environment string
+	StackEnv string
 }
 
 func NewPlausibleStack(scope constructs.Construct, id string, props *PlausibleStackProps) awscdk.Stack {
@@ -20,8 +20,15 @@ func NewPlausibleStack(scope constructs.Construct, id string, props *PlausibleSt
 	accountId := stack.Account()
 	region := stack.Region()
 
+	formatResourceName := func(name string) *string {
+		if name == "" {
+			name = "DefaultName"
+		}
+		return jsii.Sprintf("%s-%s-%s", *props.StackName, name, props.StackEnv)
+	}
+
 	// Lookup the default VPC in the account
-	vpc := ec2.Vpc_FromLookup(stack, jsii.Sprintf("%s-DefaultVPC-%s", *props.StackName, props.Environment), &ec2.VpcLookupOptions{
+	vpc := ec2.Vpc_FromLookup(stack, formatResourceName("DefaultVPC"), &ec2.VpcLookupOptions{
 		IsDefault: jsii.Bool(true),
 	})
 
@@ -29,7 +36,7 @@ func NewPlausibleStack(scope constructs.Construct, id string, props *PlausibleSt
 	sg := ec2.NewSecurityGroup(stack, jsii.String("PlausibleSG"), &ec2.SecurityGroupProps{
 		Vpc:               vpc,
 		AllowAllOutbound:  jsii.Bool(true),
-		SecurityGroupName: jsii.Sprintf("%s-PlausibleSG-%s", *props.StackName, props.Environment),
+		SecurityGroupName: formatResourceName("PlausibleSG"),
 	})
 
 	// Add ingress rules to the Security Group
@@ -38,7 +45,7 @@ func NewPlausibleStack(scope constructs.Construct, id string, props *PlausibleSt
 	sg.AddIngressRule(ec2.Peer_AnyIpv4(), ec2.Port_Tcp(jsii.Number(443)), jsii.String("Allow HTTPS"), nil) // HTTPS
 
 	// Create an IAM Role for the EC2 instance with SSM access
-	role := iam.NewRole(stack, jsii.Sprintf("%s-InstanceSSMRole-%s", *props.StackName, props.Environment), &iam.RoleProps{
+	role := iam.NewRole(stack, formatResourceName("InstanceSSMRole"), &iam.RoleProps{
 		AssumedBy: iam.NewServicePrincipal(jsii.String("ec2.amazonaws.com"), nil),
 		ManagedPolicies: &[]iam.IManagedPolicy{
 			iam.ManagedPolicy_FromAwsManagedPolicyName(jsii.String("AmazonSSMManagedInstanceCore")),
@@ -125,7 +132,7 @@ EOF
 
 	// Create the EC2 instance with the specified User Data
 	instance := ec2.NewInstance(stack, jsii.String("PlausibleInstance"), &ec2.InstanceProps{
-		InstanceName:  jsii.Sprintf("%s-PlausibleInstance-%s", *props.StackName, props.Environment),
+		InstanceName:  formatResourceName("PlausibleInstance"),
 		InstanceType:  ec2.InstanceType_Of(ec2.InstanceClass_BURSTABLE3, ec2.InstanceSize_SMALL),
 		MachineImage:  ami,
 		Vpc:           vpc,
@@ -136,7 +143,7 @@ EOF
 	})
 
 	// Assign an Elastic IP to the EC2 instance
-	eip := ec2.NewCfnEIP(stack, jsii.Sprintf("%s-InstanceEIP-%s", *props.StackName, props.Environment), &ec2.CfnEIPProps{
+	eip := ec2.NewCfnEIP(stack, formatResourceName("InstanceEIP"), &ec2.CfnEIPProps{
 		Domain:     jsii.String("vpc"),
 		InstanceId: instance.InstanceId(),
 	})
