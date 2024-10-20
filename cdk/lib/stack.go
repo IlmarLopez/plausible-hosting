@@ -58,7 +58,7 @@ func NewPlausibleStack(scope constructs.Construct, id string, props *PlausibleSt
 
 	// Lookup the latest Ubuntu 20.04 AMI
 	ami := ec2.MachineImage_Lookup(&ec2.LookupMachineImageProps{
-		Name:   jsii.String("ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-arm64-server-*"),
+		Name:   jsii.String("ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"),
 		Owners: &[]*string{jsii.String("099720109477")},
 	})
 
@@ -74,8 +74,9 @@ func NewPlausibleStack(scope constructs.Construct, id string, props *PlausibleSt
 		jsii.String("sudo apt-get install -y docker.io git awscli curl"),
 		jsii.String("sudo systemctl enable docker"),
 		jsii.String("sudo systemctl start docker"),
-		// Install Docker Compose v2 como plugin
-		jsii.String("sudo apt-get install -y docker-compose-plugin"),
+		// Download Docker Compose v1.29.2 para x86_64
+		jsii.String("sudo curl -L \"https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose"),
+		jsii.String("sudo chmod +x /usr/local/bin/docker-compose"),
 		// Retrieve the instance's region
 		jsii.String("REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)"),
 		// Clone the Plausible Hosting repository
