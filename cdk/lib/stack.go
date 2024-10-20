@@ -71,9 +71,13 @@ func NewPlausibleStack(scope constructs.Construct, id string, props *PlausibleSt
 	userData.AddCommands(
 		// Update and install necessary packages
 		jsii.String("sudo apt-get update -y"),
-		jsii.String("sudo apt-get install -y docker.io docker-compose git awscli"),
+		jsii.String("sudo apt-get install -y docker.io git awscli curl"),
 		jsii.String("sudo systemctl enable docker"),
 		jsii.String("sudo systemctl start docker"),
+		// Install Docker Compose v1.29.2
+		jsii.String("sudo curl -L \"https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose"),
+		jsii.String("sudo chmod +x /usr/local/bin/docker-compose"),
+		jsii.String("docker-compose --version"),
 		// Retrieve the instance's region
 		jsii.String("REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)"),
 		// Clone the Plausible Hosting repository
