@@ -76,14 +76,14 @@ func NewPlausibleStack(scope constructs.Construct, id string, props *PlausibleSt
 		jsii.String("sudo systemctl start docker"),
 		// Retrieve the instance's region
 		jsii.String("REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)"),
-		// Fetch secrets from AWS SSM Parameter Store and export as environment variables
-		jsii.String("echo 'POSTGRES_PASSWORD=$(aws ssm get-parameter --name \"/plausible/postgres_password\" --with-decryption --query Parameter.Value --output text --region $REGION)' | sudo tee /home/ubuntu/plausible-hosting/.env"),
-		jsii.String("echo 'BASE_URL=https://analytics.ilmarlopez.com' | sudo tee -a /home/ubuntu/plausible-hosting/.env"),
-		jsii.String("echo 'SECRET_KEY_BASE=$(aws ssm get-parameter --name \"/plausible/secret_key_base\" --with-decryption --query Parameter.Value --output text --region $REGION)' | sudo tee -a /home/ubuntu/plausible-hosting/.env"),
 		// Clone the Plausible Hosting repository
 		jsii.String("cd /home/ubuntu"),
 		jsii.String("git clone https://github.com/IlmarLopez/plausible-hosting.git"),
 		jsii.String("cd plausible-hosting"),
+		// Fetch secrets from AWS SSM Parameter Store and export as environment variables
+		jsii.String("echo 'POSTGRES_PASSWORD=$(aws ssm get-parameter --name \"/plausible/postgres_password\" --with-decryption --query Parameter.Value --output text --region $REGION)' | sudo tee /home/ubuntu/plausible-hosting/.env"),
+		jsii.String("echo 'BASE_URL=https://analytics.ilmarlopez.com' | sudo tee -a /home/ubuntu/plausible-hosting/.env"),
+		jsii.String("echo 'SECRET_KEY_BASE=$(aws ssm get-parameter --name \"/plausible/secret_key_base\" --with-decryption --query Parameter.Value --output text --region $REGION)' | sudo tee -a /home/ubuntu/plausible-hosting/.env"),
 		// Start Docker Compose services
 		jsii.String("sudo docker-compose up -d"),
 		// Install Nginx and Certbot
