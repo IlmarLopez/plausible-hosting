@@ -89,7 +89,7 @@ func NewPlausibleStack(scope constructs.Construct, id string, props *PlausibleSt
 		jsii.String("echo \"SECRET_KEY_BASE=$(aws ssm get-parameter --name \"/plausible/secret_key_base\" --with-decryption --query Parameter.Value --output text --region $REGION)\" >> .env"),
 		// Start Docker Compose services
 		jsii.String("sudo mv compose.yml docker-compose.yml"),
-		jsii.String("sudo docker compose up -d"),
+		jsii.String("sudo docker-compose up -d"),
 		// Install Nginx and Certbot
 		jsii.String("sudo apt-get install -y nginx python3-certbot-nginx"),
 		jsii.String("sudo systemctl enable nginx"),
