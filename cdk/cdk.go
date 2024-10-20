@@ -9,12 +9,19 @@ import (
 )
 
 func main() {
+
+	environment := os.Getenv("ENVIRONMENT")
+	if environment == "" {
+		environment = "dev"
+	}
+
 	app := awscdk.NewApp(nil)
 
 	lib.NewPlausibleStack(app, "plausible-stack", &lib.PlausibleStackProps{
 		StackProps: awscdk.StackProps{
 			Env: env(),
 		},
+		Environment: environment,
 	})
 
 	app.Synth(nil)
