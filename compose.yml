@@ -33,12 +33,10 @@ services:
     restart: always
     command: sh -c "/entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh run"
     ports:
-      - "127.0.0.1:8000:8000"
+      - "8000:8000"
     depends_on:
-      plausible_db:
-        condition: service_healthy
-      plausible_events_db:
-        condition: service_healthy
+      - plausible_db
+      - plausible_events_db
     volumes:
       - plausible-data:/plausible
     ulimits:
