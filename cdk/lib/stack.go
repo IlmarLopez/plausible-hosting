@@ -137,7 +137,7 @@ EOF
 		MachineImage:  ami,
 		Vpc:           vpc,
 		SecurityGroup: sg,
-		KeyPair:       ec2.KeyPair_FromKeyPairName(stack, jsii.String("KeyPairName"), jsii.String("plausible-stack-KeyPair"+props.StackEnv)),
+		KeyPair:       ec2.KeyPair_FromKeyPairName(stack, jsii.String("KeyPairName"), jsii.String("plausible-stack-KeyPair-"+props.StackEnv)),
 		Role:          role,
 		UserData:      userData,
 	})
