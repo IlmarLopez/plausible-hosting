@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awsec2"
 	ec2 "github.com/aws/aws-cdk-go/awscdk/v2/awsec2"
 	iam "github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
 	"github.com/aws/constructs-go/constructs/v10"
@@ -130,6 +131,11 @@ EOF
 		jsii.String("echo '0 0 * * * root /usr/bin/certbot renew --quiet' | sudo tee /etc/cron.d/certbot-renew"),
 	)
 
+	keyPairName := formatResourceName("KeyPair")
+	awsec2.NewCfnKeyPair(stack, jsii.String("KeyPair"), &awsec2.CfnKeyPairProps{
+		KeyName: keyPairName,
+	})
+
 	// Create the EC2 instance with the specified User Data
 	instance := ec2.NewInstance(stack, jsii.String("PlausibleInstance"), &ec2.InstanceProps{
 		InstanceName:  formatResourceName("PlausibleInstance"),
@@ -137,7 +143,7 @@ EOF
 		MachineImage:  ami,
 		Vpc:           vpc,
 		SecurityGroup: sg,
-		KeyPair:       ec2.KeyPair_FromKeyPairName(stack, jsii.String("KeyPairName"), jsii.String("plausible-keypair")),
+		KeyPair:       ec2.KeyPair_FromKeyPairName(stack, jsii.String("KeyPairName"), keyPairName),
 		Role:          role,
 		UserData:      userData,
 	})
