@@ -5,7 +5,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       start_period: 1m
@@ -43,6 +43,8 @@ services:
       nofile:
         soft: 65535
         hard: 65535
+    ports:
+      - "0.0.0.0:8000:8000"
     environment:
       - TMPDIR=/var/lib/plausible/tmp
       # required: https://github.com/plausible/community-edition/wiki/configuration#required
