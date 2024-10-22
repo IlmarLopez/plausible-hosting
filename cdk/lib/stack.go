@@ -75,6 +75,11 @@ func NewPlausibleStack(scope constructs.Construct, id string, props *PlausibleSt
 		Shebang: jsii.String("#!/bin/bash"),
 	})
 
+	cloneRepoCommand := "git clone https://github.com/IlmarLopez/plausible-hosting.git"
+	if props.StackEnv == "dev" {
+		cloneRepoCommand = "git clone --single-branch --branch dev https://github.com/IlmarLopez/plausible-hosting.git"
+	}
+
 	// Add commands to the User Data script
 	userData.AddCommands(
 		// Update and install necessary packages
@@ -89,7 +94,7 @@ func NewPlausibleStack(scope constructs.Construct, id string, props *PlausibleSt
 		jsii.String("REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)"),
 		// Clone the Plausible Hosting repository
 		jsii.String("cd /home/ubuntu"),
-		jsii.String("git clone https://github.com/IlmarLopez/plausible-hosting.git"),
+		jsii.String(cloneRepoCommand),
 		jsii.String("cd plausible-hosting"),
 		// Fetch secrets from AWS SSM Parameter Store and export as environment variables
 		jsii.String("echo \"POSTGRES_PASSWORD=$(aws ssm get-parameter --name \"/plausible/postgres_password\" --with-decryption --query Parameter.Value --output text --region $REGION)\" > .env"),
