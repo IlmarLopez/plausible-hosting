@@ -1,3 +1,5 @@
+version: '3'
+
 services:
   plausible_db:
     image: postgres:16-alpine
@@ -44,7 +46,7 @@ services:
         soft: 65535
         hard: 65535
     ports:
-      - 8000:8000
+      - "8000:8000"
     environment:
       - TMPDIR=/var/lib/plausible/tmp
       # required: https://github.com/plausible/community-edition/wiki/configuration#required
