@@ -17,7 +17,7 @@ func main() {
 
 	app := awscdk.NewApp(nil)
 	stackName := "plausible-stack"
-	lib.NewPlausibleStack(app, stackName, &lib.PlausibleStackProps{
+	lib.NewPlausibleStack(app, *jsii.Sprintf("%s-%s", stackName, environment), &lib.PlausibleStackProps{
 		StackProps: awscdk.StackProps{
 			Env:       env(),
 			StackName: jsii.String(stackName),
