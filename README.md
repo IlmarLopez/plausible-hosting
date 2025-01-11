@@ -23,7 +23,7 @@
 1. Clone this repository:
 
     ```console
-    $ git clone -b v2.1.3 --single-branch https://github.com/plausible/community-edition plausible-ce
+    $ git clone -b v2.1.4 --single-branch https://github.com/plausible/community-edition plausible-ce
     Cloning into 'plausible-ce'...
     remote: Enumerating objects: 13, done.
     remote: Counting objects: 100% (10/10), done.
@@ -77,6 +77,11 @@
     ```
 
 1. Visit your instance at `$BASE_URL` and create the first user.
+
+> [!NOTE]
+> Plausible CE is funded by our cloud subscribers.
+>
+> If you know someone who might [find Plausible useful](https://plausible.io/?utm_medium=Social&utm_source=GitHub&utm_campaign=readme), we'd appreciate if you'd let them know.
 
 ### Wiki
 
