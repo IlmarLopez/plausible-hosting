@@ -1,4 +1,4 @@
-version: "3.9"
+
 services:
   plausible_db:
     image: postgres:16-alpine
@@ -14,6 +14,8 @@ services:
   plausible_events_db:
     image: clickhouse/clickhouse-server:24.3.3.102-alpine
     restart: always
+    ports:
+      - 8123:8123
     volumes:
       - event-data:/var/lib/clickhouse
       - event-logs:/var/log/clickhouse-server
@@ -63,8 +65,8 @@ services:
       - HTTP_PORT
       - HTTPS_PORT
       # databases: https://github.com/plausible/community-edition/wiki/configuration#database
-      - DATABASE_URL
-      - CLICKHOUSE_DATABASE_URL
+      - DATABASE_URL=postgres://postgres:${POSTGRES_PASSWORD}@plausible_db:5432/plausible_db
+      - CLICKHOUSE_DATABASE_URL=http://plausible_events_db:8123/plausible_events_db
       # Google: https://github.com/plausible/community-edition/wiki/configuration#google
       - GOOGLE_CLIENT_ID
       - GOOGLE_CLIENT_SECRET
